@@ -1,6 +1,8 @@
 import os
 import shutil
 import requests
+from tqdm import tqdm
+
 import secrets
 
 
@@ -16,10 +18,22 @@ class Colorize:
         else:
             self.destination = os.path.join(os.getcwd(), 'result')
 
+    @staticmethod
+    def is_local_file(path):
+        if path.startswith("http"):
+            return False
+        return True
+
+    def colorize(self):
+        counter = 0
+        count = len(os.listdir(self.source)) - 1
+        print("Colorizing %d images" % count)
         for file in os.listdir(self.source):
             if file == '.keep':
                 continue
+            counter += 1
 
+            print("Uploading: %s - %d/%d" % (file, counter, count))
             if self.is_local_file(self.source):
                 r = requests.post(
                     secrets.API_URL,
@@ -38,7 +52,6 @@ class Colorize:
                 )
 
             url = r.json()['output_url']
-            image_name = url.split('/')[4] + "." + url.split('/')[6].split('.')[1]
             response = requests.get(url, stream=True)
 
             try:
@@ -46,12 +59,7 @@ class Colorize:
             except FileNotFoundError:
                 os.mkdir(self.destination)
 
-            with open('%s/%s' % (self.destination, image_name), 'wb') as out_file:
+            print("Downloading: %s - %d/%d" % (file, counter, count))
+            with open('%s/%s' % (self.destination, file), 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
             del response
-
-    @staticmethod
-    def is_local_file(path):
-        if path.startswith("http"):
-            return False
-        return True
