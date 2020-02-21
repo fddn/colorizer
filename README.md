@@ -37,3 +37,9 @@ Passing source and destination folder as parameter
 	Downloading: test1.jpg - 1/2
 	Uploading: test2.jpg - 2/2
 	Downloading: test2.jpg - 2/2
+	
+### Future work:
+- Need some more refactoring, this code currently little spaghetti
+- Parallel update might be handy and speed up the process a bit
+- Maybe a GUI would be nice
+- Any other idea?
