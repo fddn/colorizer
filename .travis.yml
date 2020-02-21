@@ -1,5 +1,5 @@
 language: python
-os: windows
+os: linux
 install:
   - pip install -r requirements.txt
   - pip install pyinstaller
