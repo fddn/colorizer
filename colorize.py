@@ -1,8 +1,6 @@
 import os
 import shutil
 import requests
-from tqdm import tqdm
-
 import secrets
 
 
@@ -18,12 +16,6 @@ class Colorize:
         else:
             self.destination = os.path.join(os.getcwd(), 'result')
 
-    @staticmethod
-    def is_local_file(path):
-        if path.startswith("http"):
-            return False
-        return True
-
     def colorize(self):
         counter = 0
         count = len(os.listdir(self.source)) - 1
@@ -32,34 +24,30 @@ class Colorize:
             if file == '.keep':
                 continue
             counter += 1
+            result = self.upload(file, counter, count)
+            response = requests.get(result, stream=True)
+            self.download(response, file, counter, count)
 
-            print("Uploading: %s - %d/%d" % (file, counter, count))
-            if self.is_local_file(self.source):
-                r = requests.post(
-                    secrets.API_URL,
-                    files={
-                        'image': open(os.path.join(self.source, file), 'rb')
-                    },
-                    headers={'api-key': secrets.API_KEY}
-                )
-            else:
-                r = requests.post(
-                    secrets.API_URL,
-                    data={
-                        'image': file
-                    },
-                    headers={'api-key': secrets.API_KEY}
-                )
+    def upload(self, file, counter, count):
+        print("Uploading: %s - %d/%d" % (file, counter, count))
+        r = requests.post(
+            secrets.API_URL,
+            files={
+                'image': open(os.path.join(self.source, file), 'rb')
+            },
+            headers={'api-key': secrets.API_KEY}
+        )
 
-            url = r.json()['output_url']
-            response = requests.get(url, stream=True)
+        url = r.json()['output_url']
+        return url
 
-            try:
-                os.stat(self.destination)
-            except FileNotFoundError:
-                os.mkdir(self.destination)
+    def download(self, response, file, counter, count):
+        try:
+            os.stat(self.destination)
+        except FileNotFoundError:
+            os.mkdir(self.destination)
 
-            print("Downloading: %s - %d/%d" % (file, counter, count))
-            with open('%s/%s' % (self.destination, file), 'wb') as out_file:
-                shutil.copyfileobj(response.raw, out_file)
-            del response
+        print("Downloading: %s - %d/%d" % (file, counter, count))
+        with open('%s/%s' % (self.destination, file), 'wb') as out_file:
+            shutil.copyfileobj(response.raw, out_file)
+        del response
