@@ -17,6 +17,9 @@ class Colorize:
             self.destination = os.path.join(os.getcwd(), 'result')
 
         for file in os.listdir(self.source):
+            if file == '.keep':
+                continue
+
             if self.is_local_file(self.source):
                 r = requests.post(
                     secrets.API_URL,
