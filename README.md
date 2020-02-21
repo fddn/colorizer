@@ -1,5 +1,7 @@
 
 # Colorizer  
+[![Build Status](https://travis-ci.com/fddn/colorizer.svg?branch=master)](https://travis-ci.com/fddn/colorizer)
+
 This little program is using DeepAI API to colorize black and white pictures.  
   
 ##  Installation
