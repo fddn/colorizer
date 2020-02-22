@@ -11,7 +11,12 @@ This little program is using DeepAI API to colorize black and white pictures.
     pip install -r requirements.txt
 
 ## Usage
-Without any parameter, the program uses the source folder to store the black and white images and uses result to store the colorized images.
+First of all, you need to register an account on [DeepAPI](https://deepai.org/) and fill secrets.py.
+Set API_KEY to you secret key:
+
+    API_KEY = '<changeme>' --> API_KEY = 'something_secret_key_provided_by_DeepAI'
+
+Now you can run without any parameter, the program uses the source folder to store the black and white images and uses result to store the colorized images.
 
     $ python main.py -h
 	usage: main.py [-h] [-s SOURCE] [-d DESTINATION]
